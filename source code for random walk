@@ -1,0 +1,122 @@
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Main {
+	static volatile int[] data ;
+	static ArrayList<ArrayList<Integer>> bigAry = new ArrayList<ArrayList<Integer>>();
+	static volatile int nMax = -1;
+
+
+	public static void main(String[] args){
+		long t_start = System.currentTimeMillis();
+		PrintWriter write = null;
+		int threadCount = Data.T,maxWork = Data.max;
+	
+		ArrayList<MyThreads> arrThreads = new ArrayList<MyThreads>();
+
+
+		try {
+			write = new PrintWriter(args[0]);
+			for (int i = 0; i < threadCount; i++) {
+				MyThreads T1 = new MyThreads();                
+				T1.start();                
+				arrThreads.add(T1);
+			} 
+
+			for (int i = 0; i < arrThreads.size(); i++) {
+				arrThreads.get(i).join(); 
+			} 
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+
+		for(int i = 0;i< arrThreads.size();i++) 
+			if(arrThreads.get(i).nMax > nMax) nMax = arrThreads.get(i).nMax;
+		
+
+		
+		data = new int[nMax+1];
+		
+		for(int i = 0;i< arrThreads.size();i++) {
+			for(int j = 0;j < maxWork; j++) 
+				data[arrThreads.get(i).returnList().get(j)]++;
+		}
+
+
+		for(int i = 1;i<= nMax ;i++) {
+
+			if(data[i] > 0 ) 
+				write.println(i + " " + (double)data[i]/Data.M);
+			
+			else
+				write.println(i + " 0");
+		}
+
+
+
+
+		long t_end = System.currentTimeMillis();
+		double run_time = (t_end - t_start)*0.001;
+		System.out.println("time (sec) = " + run_time);
+
+		write.close();
+
+	}//Main
+}//Project_Main
+
+
+class MyThreads extends Thread {
+	public int x,n,k,maxWork,u,d,nMax;
+	private ArrayList<Integer> list = new ArrayList<Integer>();
+
+	MyThreads(){
+		this.k = Data.k;
+		this.x = k;
+		this.n = 0;
+		this.maxWork = Data.max;
+		this.u = Data.u;
+		this.d = Data.d;
+		this.nMax = -1;
+	}
+
+	public void run() {
+		for(int i = 0;i< maxWork;i++ ) {
+			x = k;
+			n = 0;
+
+			while(x > 0) {
+				n++;
+				if (ThreadLocalRandom.current().nextInt(2) == 1) 
+					x += u;
+				else 
+					x -= d;
+			}
+
+			if(n > nMax) nMax = n;
+
+			list.add(n);
+
+		}//forloop
+	}
+
+
+	public ArrayList<Integer> returnList(){
+		return list;
+	}
+
+
+}
+
+class Data{
+
+	static int u =1;
+	static int d = 2;
+	static int k = 100;
+	static int M = 10000000;//number of random walks
+	static int T = 1000;//threads
+	static int max = M/T;
+
+}
