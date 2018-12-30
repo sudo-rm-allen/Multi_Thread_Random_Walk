@@ -1,0 +1,66 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String args[]) {
+		
+		File file = new File("Histogram.txt");
+		Scanner sc = null;
+	    try {
+
+	        sc = new Scanner(file);
+
+	    } 
+	    catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    }
+
+	    
+	    double hn,n;
+	    double mean =0;
+	    int data = 10000000;
+	    while (sc.hasNext()) {
+            n = sc.nextInt();
+            hn = sc.nextDouble();
+            mean += hn* n;
+           
+        }
+	    
+	    //mean /= data;
+	    
+	    hn = 0;
+	    n = 0;
+	    double meanSquared = mean * mean;
+	    
+	    try {
+			sc = new Scanner(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    double variance = 0;
+	    while (sc.hasNext()) {
+            n = sc.nextInt();
+            hn = sc.nextDouble();
+            variance += hn* n * n;
+           
+        }
+	    
+	    //variance /= data;
+	    variance -= meanSquared;
+	    
+	    
+	    
+	    
+	    System.out.println(mean);
+	    System.out.println(variance);
+        sc.close();
+	    
+	    
+		
+	}
+	
+}
